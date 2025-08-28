@@ -1,18 +1,27 @@
 package tests;
 
 import base.BaseTest;
-import client.OrdersClient;
+import client.OrderClient;
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 
+@Feature("Orders")
+@Story("List orders")
+@Owner("Vasiliy")
 public class OrdersListTests extends BaseTest {
-    private final OrdersClient ordersClient = new OrdersClient();
+
+    private final OrderClient orders = new OrderClient();
 
     @Test
-    public void ordersListIsReturned() {
-        ordersClient.list()
+    @Severity(SeverityLevel.NORMAL)
+    @DisplayName("GET /api/v1/orders возвращает массив orders")
+    public void getOrders_returnsList() {
+        orders.getOrders()
                 .then().statusCode(200)
-                .body("orders", notNullValue());
+                .body("orders", notNullValue())
+                .body("orders.size()", greaterThan(0));
     }
 }

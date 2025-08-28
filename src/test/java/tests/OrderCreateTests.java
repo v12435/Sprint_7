@@ -1,39 +1,48 @@
 package tests;
 
 import base.BaseTest;
-import client.OrdersClient;
+import client.OrderClient;
+import io.qameta.allure.*;
+import io.qameta.allure.junit4.DisplayName;
+import io.restassured.response.Response;
 import model.OrderRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
-import java.util.*;
+import util.DataFactory;
 
 import static org.hamcrest.Matchers.notNullValue;
-import static util.DataFactory.orderWithColors;
 
 @RunWith(Parameterized.class)
+@Feature("Orders")
+@Story("Create order")
+@Owner("Vasiliy")
 public class OrderCreateTests extends BaseTest {
-    private final OrdersClient ordersClient = new OrdersClient();
 
-    @Parameterized.Parameters(name = "colors={0}")
+    private final OrderClient orders = new OrderClient();
+
+    @Parameterized.Parameters(name = "Цвета: {0}")
     public static Object[][] colors() {
         return new Object[][]{
-                {Collections.singletonList("BLACK")},
-                {Collections.singletonList("GREY")},
-                {Arrays.asList("BLACK","GREY")},
-                {Collections.emptyList()}
+                { DataFactory.orderBlack()   },
+                { DataFactory.orderGrey()    },
+                { DataFactory.orderBoth()    },
+                { DataFactory.orderNoColor() }
         };
     }
 
-    @Parameterized.Parameter
-    public List<String> colorsParam;
+    private final OrderRequest order;
+
+    public OrderCreateTests(OrderRequest order) {
+        this.order = order;
+    }
 
     @Test
+    @Severity(SeverityLevel.CRITICAL)
+    @DisplayName("Создание заказа возвращает 201 и track")
     public void createOrder_returnsTrack() {
-        OrderRequest req = orderWithColors(colorsParam);
-        ordersClient.create(req)
-                .then().statusCode(201)
-                .body("track", notNullValue());
+        String label = DataFactory.label(order.getColor());
+        Response resp = orders.createOrder(order, label);
+        resp.then().statusCode(201).body("track", notNullValue());
     }
 }
