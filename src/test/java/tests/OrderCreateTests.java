@@ -7,11 +7,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.notNullValue;
 import static util.DataFactory.orderWithColors;
 
 @RunWith(Parameterized.class)
@@ -32,7 +30,7 @@ public class OrderCreateTests extends BaseTest {
     public List<String> colorsParam;
 
     @Test
-    public void createOrderWithColors_shouldReturnTrack() {
+    public void createOrder_returnsTrack() {
         OrderRequest req = orderWithColors(colorsParam);
         ordersClient.create(req)
                 .then().statusCode(201)
