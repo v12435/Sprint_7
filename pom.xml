@@ -15,6 +15,8 @@
         <surefire.version>3.2.5</surefire.version>
         <allure.version>2.26.0</allure.version>
         <slf4j.version>2.0.13</slf4j.version>
+        <lombok.version>1.18.32</lombok.version>
+        <httpclient.version>4.5.14</httpclient.version>
     </properties>
 
     <dependencyManagement>
@@ -66,20 +68,43 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Gson (compile scope, чтобы сериализация работала) -->
+        <!-- Gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
         </dependency>
 
-        <!-- (Опционально) подавить предупреждение SLF4J -->
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- HttpStatus constants -->
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
+        </dependency>
+
+        <!-- SLF4J simple logger (убираем варнинги) -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>${slf4j.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- Java Faker для генерации тестовых данных -->
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -91,8 +116,16 @@
                 <version>3.11.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
+
 
             <!-- Surefire: подключаем Allure JUnit4 listener + не валим билд на красных тестах -->
             <plugin>
@@ -120,6 +153,7 @@
                 <artifactId>allure-maven</artifactId>
                 <version>2.13.0</version>
             </plugin>
+
         </plugins>
     </build>
 </project>

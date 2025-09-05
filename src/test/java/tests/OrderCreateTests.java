@@ -12,6 +12,7 @@ import org.junit.runners.Parameterized;
 import util.DataFactory;
 
 import static org.hamcrest.Matchers.notNullValue;
+import static org.apache.http.HttpStatus.*;
 
 @RunWith(Parameterized.class)
 @Feature("Orders")
@@ -40,9 +41,8 @@ public class OrderCreateTests extends BaseTest {
     @Test
     @Severity(SeverityLevel.CRITICAL)
     @DisplayName("Создание заказа возвращает 201 и track")
-    public void createOrder_returnsTrack() {
-        String label = DataFactory.label(order.getColor());
-        Response resp = orders.createOrder(order, label);
-        resp.then().statusCode(201).body("track", notNullValue());
+    public void createOrder201AndTrack() {
+        Response resp = orders.createOrder(order);
+        resp.then().statusCode(SC_CREATED).body("track", notNullValue());
     }
 }

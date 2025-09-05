@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
@@ -11,33 +10,26 @@ import model.CourierCredentials;
 import static io.restassured.RestAssured.given;
 
 public class CourierClient {
-    private static final Gson GSON = new Gson();
+    private static final String COURIER = "/api/v1/courier";
+    private static final String LOGIN = "/api/v1/courier/login";
 
-    @Step("Создаём курьера: login={login}, firstName={firstName}")
-    public Response createCourier(String login, String password, String firstName) {
-        Courier body = new Courier(login, password, firstName);
-        String json = GSON.toJson(body);
-        Allure.addAttachment("Тело запроса (create courier)", json);
-
+    @Step("Создаём курьера: {courier}")
+    public Response createCourier(Courier courier) {
         Response resp = given()
                 .contentType(ContentType.JSON)
-                .body(json)
-                .post("/api/v1/courier");
+                .body(courier)
+                .post(COURIER);
 
         Allure.addAttachment("Тело ответа (create courier)", resp.asPrettyString());
         return resp;
     }
 
-    @Step("Логинимся курьером: login={login}")
-    public Response loginCourier(String login, String password) {
-        CourierCredentials creds = new CourierCredentials(login, password);
-        String json = GSON.toJson(creds);
-        Allure.addAttachment("Тело запроса (login)", json);
-
+    @Step("Логинимся курьером: {creds}")
+    public Response loginCourier(CourierCredentials creds) {
         Response resp = given()
                 .contentType(ContentType.JSON)
-                .body(json)
-                .post("/api/v1/courier/login");
+                .body(creds)
+                .post(LOGIN);
 
         Allure.addAttachment("Тело ответа (login)", resp.asPrettyString());
         return resp;
@@ -46,7 +38,7 @@ public class CourierClient {
     @Step("Удаляем курьера id={courierId}")
     public Response deleteCourier(int courierId) {
         Response resp = given()
-                .delete("/api/v1/courier/" + courierId);
+                .delete(COURIER + "/" + courierId);
         Allure.addAttachment("Тело ответа (delete)", resp.asPrettyString());
         return resp;
     }

@@ -1,6 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import io.restassured.http.ContentType;
@@ -10,17 +9,14 @@ import model.OrderRequest;
 import static io.restassured.RestAssured.given;
 
 public class OrderClient {
-    private static final Gson GSON = new Gson();
+    private static final String ORDERS = "/api/v1/orders";
 
-    @Step("Создаём заказ (color={colorsLabel})")
-    public Response createOrder(OrderRequest body, String colorsLabel) {
-        String json = GSON.toJson(body);
-        Allure.addAttachment("Тело запроса (create order)", json);
-
+    @Step("Создаём заказ")
+    public Response createOrder(OrderRequest body) {
         Response resp = given()
                 .contentType(ContentType.JSON)
-                .body(json)
-                .post("/api/v1/orders");
+                .body(body)
+                .post(ORDERS);
 
         Allure.addAttachment("Тело ответа (create order)", resp.asPrettyString());
         return resp;
@@ -30,19 +26,18 @@ public class OrderClient {
     public Response getOrders() {
         Response resp = given()
                 .contentType(ContentType.JSON)
-                .when()
-                .get("/api/v1/orders");
+                .get(ORDERS);
 
-        Allure.addAttachment("Тело ответа (orders list)", "application/json", resp.asPrettyString(), "json");
+        Allure.addAttachment("Тело ответа (orders list)", resp.asPrettyString());
         return resp;
     }
-
 
     @Step("Получаем заказ по треку t={track}")
     public Response getOrderByTrack(int track) {
         Response resp = given()
                 .queryParam("t", track)
-                .get("/api/v1/orders/track");
+                .get(ORDERS + "/track");
+
         Allure.addAttachment("Тело ответа (order by track)", resp.asPrettyString());
         return resp;
     }

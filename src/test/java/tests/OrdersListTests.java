@@ -7,6 +7,7 @@ import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;
+import static org.apache.http.HttpStatus.*;
 
 @Feature("Orders")
 @Story("List orders")
@@ -18,9 +19,9 @@ public class OrdersListTests extends BaseTest {
     @Test
     @Severity(SeverityLevel.NORMAL)
     @DisplayName("GET /api/v1/orders возвращает массив orders")
-    public void getOrders_returnsList() {
+    public void getOrders200AndList() {
         orders.getOrders()
-                .then().statusCode(200)
+                .then().statusCode(SC_OK)
                 .body("orders", notNullValue())
                 .body("orders.size()", greaterThan(0));
     }

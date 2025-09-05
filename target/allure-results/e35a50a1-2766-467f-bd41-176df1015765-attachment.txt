@@ -1,1 +1,0 @@
-{"login":"qa_8650adac","password":"1234"}
